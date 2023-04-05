@@ -2,41 +2,37 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/form.scss';
 import Alert from '../alert/Alert';
-import { loginUser } from '../../api/auth/AuthServices';
+import { forgotPassword } from '../../api/auth/AuthServices';
 
 
 
 export default function login() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState({});
-  
+  const [info, setInfo] = useState({});
+ 
 //This handles the submit event
   const handleSubmit =  async (e) => {
     e.preventDefault();
-
-    const user = {
-      identifier: email,
-      password: password
-  };
-
-  const {response, error} = await loginUser(user);
-  if (response) {
-    //clear form fields
-    setEmail('');
-    setPassword('');
-    setError('');
-  }
-  if (error) {
-    setError(error);
-  }
   
-};
+   const  { response, error } =await forgotPassword({email});
+   if (response) {
+    //clear email fields
+    setEmail('');
+    setError({});
+    setInfo({message: 'Check your email for link to reset password.'})
+    console.log(response);
+   }
+   if (error) {
+    setError(error);
+   }
 
+};
 
   return (
     <>
     {error.message &&  (<Alert type='success' message={error} />)}
+    {info.message &&  (<Alert type='success' message={info} />)}
     
     <form className="form form--page" onSubmit={handleSubmit}>
       <div className="form__group form__group--page">
@@ -50,23 +46,14 @@ export default function login() {
         />
       </div>
 
-      <div className="form__group form__group--page">
-        <label className="form__label">Password</label>
-        <input 
-        className="form__field" 
-        type="password" 
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
+  
 
       <div className="form__group form__group--page">
-        <input className="form__btn" type="submit" value="Login" />
+        <input className="form__btn" type="submit" value="Request New Password" />
       </div>
 
       <footer>
-        Dont have an account? <Link to='/register'>Register</Link> or <Link to='/forgot-password'>Forgot Password</Link>
+        Have an account? <Link to='/login'>Login</Link>
       </footer>
     </form>
     </>

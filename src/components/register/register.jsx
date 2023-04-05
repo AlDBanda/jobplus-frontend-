@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import '../styles/form.scss';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Alert from '../alert/Alert';
+import { createUser } from '../../api/auth/AuthServices';
+
+
 
 export default function register() {
   const [firstName, setFirstName] = useState('');
@@ -20,23 +22,21 @@ export default function register() {
       return;
     }
 
-    try {
-      const res = await axios.post(
-        'http://localhost:1337/api/auth/local/register', 
-      person
-      );
-      setError({});
-      // clear form fields
+    const { response, error } = await createUser(person);
+
+    if (response) {
+      //clear form fields
       setFirstName('');
       setLastName('');
       setEmail('');
       setPassword('');
       setConfirmPassword('');
-      
-    } catch (err) {
-      setError(err.response.data.error);
+      setError({});
     }
-  }
+    if (error) {
+      setError(error);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -55,7 +55,7 @@ export default function register() {
 
   return (
     <>
-     {error.message &&  (<Alert type='success' error={error} />)}
+     {error.message &&  (<Alert type='success' message={error} />)}
      <form className="form form--page" onSubmit={handleSubmit}>
       <div className="form__group form__group--page">
         <label className="form__label">First name</label>

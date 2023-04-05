@@ -1,9 +1,9 @@
 import React from 'react'
 import './Alert.scss'
 
-export default function Alert({type, error}) {
-  const message = error ? error.message : '';
-  const details = error?.details?.errors ? error?.details?.errors : [];
+export default function Alert({type, message: msg}) {
+  const message = msg ? msg.message : '';
+  const details = msg?.details?.errors ? msg?.details?.errors : [];
 
   return (
     <div className={`alert alert--${type}`}>
